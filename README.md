@@ -2,35 +2,39 @@
 
 This repository contains machine learning and deep learning models implemented by different team members to detect fake news.
 
-## Project Structure
+## Required Repository Structure
 
-The project uses git branches to separate work among team members. The base structure of the repository on the `main` branch is as follows:
+The project has the following base repository structure on the `main` branch:
 
 ```
-Fake-News-Detection/ (main branch)
-│
-├── Dataset/
+project-root/
+├── data/
 │     ├── Fake.csv
 │     └── True.csv
-│
-├── app.py
+├── notebooks/
+├── src/
+├── models/
+├── reports/
+├── screenshots/
+├── videos/
 ├── requirements.txt
-└── README.md
+├── README.md
+└── .gitignore
 ```
 
 ## Member Branches
 
-Each team member works on their respective branch containing their model implementations at the root of the project:
+Each team member works on their respective branch. In their branch, their specific model notebooks are stored under the `notebooks/` directory:
 
 - **Branch `member1`**:
-  - `LogisticRegression.ipynb`
-  - `LSTM.ipynb`
+  - `notebooks/LogisticRegression.ipynb`
+  - `notebooks/LSTM.ipynb`
 - **Branch `member2`**:
-  - `SVM.ipynb`
-  - `GRU.ipynb`
+  - `notebooks/SVM.ipynb`
+  - `notebooks/GRU.ipynb`
 - **Branch `member3`**:
-  - `RandomForest.ipynb`
-  - `BERT.ipynb`
+  - `notebooks/RandomForest.ipynb`
+  - `notebooks/BERT.ipynb`
 
 ## Setup Instructions
 
@@ -38,12 +42,12 @@ Each team member works on their respective branch containing their model impleme
    ```bash
    pip install -r requirements.txt
    ```
-2. Place the dataset files (`Fake.csv` and `True.csv`) inside the `Dataset` directory.
+2. Place the dataset files (`Fake.csv` and `True.csv`) inside the `data/` directory.
 3. Switch to your respective branch to work on your models:
    ```bash
    git checkout member1  # or member2, member3
    ```
-4. Run the Streamlit web application from `main`:
+4. Run the Streamlit web application:
    ```bash
    streamlit run app.py
    ```
