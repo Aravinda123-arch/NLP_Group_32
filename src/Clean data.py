@@ -59,3 +59,34 @@ print("---------------Dataset cleaned successfully!---------------")
 print(fake.head())
 print(true.head())
 
+
+import nltk
+
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
+
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+stop_words = set(stopwords.words("english"))
+lemmatizer = WordNetLemmatizer()
+
+def preprocess(text):
+
+    tokens = word_tokenize(text)
+
+    tokens = [
+        word for word in tokens
+        if word not in stop_words
+    ]
+
+    tokens = [
+        lemmatizer.lemmatize(word)
+        for word in tokens
+    ]
+
+    return " ".join(tokens)
+
+df["processed_text"] = df["clean_text"].apply(preprocess)

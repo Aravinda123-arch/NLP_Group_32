@@ -61,7 +61,3 @@ env/
 # OS-specific
 .DS_Store
 Thumbs.db
-# NLP Dataset Files
-data/Fake.csv
-data/True.csv
-data/cleaned_news.csv
