@@ -38,6 +38,7 @@ Each team member works on their respective branch. In their branch, their specif
 
 ## Setup Instructions
 
+
 1. Clone the repository and install dependencies:
    ```bash
    pip install -r requirements.txt
