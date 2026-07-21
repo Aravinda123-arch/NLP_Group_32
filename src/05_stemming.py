@@ -1,39 +1,9 @@
-import pandas as pd
-import ast
-import nltk
+# Note: Porter Stemming has been upgraded to POS-aware WordNet Lemmatization in 05_lemmatization.py
+import os
+import subprocess
+import sys
 
-from nltk.stem import PorterStemmer
-
-stemmer = PorterStemmer()
-
-# -------------------------
-# Load Dataset
-# -------------------------
-
-df = pd.read_csv("data/stopwords_removed.csv")
-
-# Convert string to list
-
-df["filtered_tokens"] = df["filtered_tokens"].apply(ast.literal_eval)
-
-# -------------------------
-# Stemming
-# -------------------------
-
-def stem_words(tokens):
-
-    return [stemmer.stem(word) for word in tokens]
-
-df["stemmed_tokens"] = df["filtered_tokens"].apply(stem_words)
-
-# Convert tokens into sentence
-
-df["processed_text"] = df["stemmed_tokens"].apply(lambda x: " ".join(x))
-
-# Save
-
-df.to_csv("data/stemmed_news.csv", index=False)
-
-print("Stemming Completed Successfully")
-print(df[["processed_text"]].head())
-
+print("Executing 05_lemmatization.py (Stemming upgraded to Lemmatization)...")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+lemmatize_script = os.path.join(current_dir, "05_lemmatization.py")
+subprocess.run([sys.executable, lemmatize_script], check=True)
