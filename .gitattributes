@@ -4,4 +4,5 @@ data/Fake.csv filter=lfs diff=lfs merge=lfs -text
 data/preprocessed_dataset.csv filter=lfs diff=lfs merge=lfs -text
 data/cleaned_dataset.csv filter=lfs diff=lfs merge=lfs -text
 data/advanced_preprocessed_dataset.csv filter=lfs diff=lfs merge=lfs -text
+TF-IDF_converted_dataset.csv filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
