@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import unicodedata
+import hashlib
 
 def remove_publisher_leakage(text):
     """
@@ -105,6 +106,11 @@ def main():
     df = df.dropna(subset=['fused_text', 'label'])
     df = df[df['fused_text'].astype(str).str.len() > 0]
 
+    if 'group_id' not in df.columns:
+        df['group_id'] = df['fused_text'].apply(
+            lambda text: hashlib.sha1(str(text)[:500].encode('utf-8')).hexdigest()[:16]
+        )
+
     # ==========================================
     # STEP 4: Handle Class Imbalance
     # ==========================================
@@ -122,11 +128,10 @@ def main():
     # ==========================================
     # STEP 5: Save Final Master Dataset
     # ==========================================
-    # Keeping only the final clean text and label for modeling
-    final_cols = ['fused_text', 'label']
+    final_cols = ['fused_text', 'label', 'group_id']
     df_balanced[final_cols].to_csv(output_path, index=False)
     
-    print(f"\n✅ SUCCESS! Master dataset (100% Leak-Proof) saved to: {output_path}")
+    print(f"\n SUCCESS! Master dataset (100% Leak-Proof) saved to: {output_path}")
 
 if __name__ == "__main__":
-    main()
+    main()

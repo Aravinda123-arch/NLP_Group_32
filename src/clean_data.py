@@ -55,7 +55,7 @@ def main():
     # Save the cleaned dataset
     df.to_csv(output_path, index=False)
 
-    print(f"\n✅ Success! Cleaned dataset saved to: {output_path}")
+    print(f"\nSuccess! Cleaned dataset saved to: {output_path}")
     
     # Display sample comparison
     print("\n--- BEFORE CLEANING ---")

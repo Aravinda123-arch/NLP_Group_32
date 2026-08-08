@@ -1,28 +1,97 @@
+from pathlib import Path
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedGroupKFold
 
-# 1. Load your latest preprocessed dataset from the data folder
-input_filename = 'data/advanced_preprocessed_dataset.csv'
-print(f"Loading data from {input_filename}...")
-df = pd.read_csv(input_filename)
+INPUT_FILE = Path("data/advanced_preprocessed_dataset.csv")
 
-# 2. Split the dataset (80% for training/before feature engineering, 20% for testing)
-# We use random_state=42 so that the random shuffle is exactly the same every time you run it.
-train_df, test_df = train_test_split(df, test_size=0.20, random_state=42)
+TRAIN_FILE = Path("data/before_feature_engineering_dataset.csv")
+TEST_FILE = Path("data/test_dataset.csv")
 
-# 3. Define your new file names with the 'data/' folder path included
-train_filename = 'data/before_Feature_engineering_dataset.csv'
-test_filename = 'data/test_dataset.csv'
 
-# 4. Save the split datasets to new CSV files in the data folder
-# index=False prevents pandas from writing the row numbers into the CSV
-print("Saving split datasets to the data folder...")
-train_df.to_csv(train_filename, index=False)
-test_df.to_csv(test_filename, index=False)
+# Load preprocessed dataset
+df = pd.read_csv(INPUT_FILE)
 
-# 5. Output a success message with row counts to verify
-print("-" * 30)
-print("Split Successful!")
-print(f"Total original rows: {len(df)}")
-print(f"80% Training Data saved as: '{train_filename}' (Rows: {len(train_df)})")
-print(f"20% Test Data saved as: '{test_filename}' (Rows: {len(test_df)})")
+required = {"fused_text", "label", "group_id"}
+
+missing = required - set(df.columns)
+
+if missing:
+    raise ValueError(
+        f"Advanced dataset missing columns: {missing}"
+    )
+
+# Remove invalid rows
+df = df.dropna(
+    subset=["fused_text", "label", "group_id"]
+).copy()
+
+df["label"] = pd.to_numeric(
+    df["label"],
+    errors="coerce"
+)
+
+df = df[
+    df["label"].isin([0, 1])
+].copy()
+
+df["label"] = df["label"].astype(int)
+
+
+# 80% train / 20% test
+splitter = StratifiedGroupKFold(
+    n_splits=5,
+    shuffle=True,
+    random_state=42
+)
+
+train_index, test_index = next(
+    splitter.split(
+        df["fused_text"],
+        df["label"],
+        groups=df["group_id"]
+    )
+)
+
+train_df = df.iloc[train_index].reset_index(drop=True)
+test_df = df.iloc[test_index].reset_index(drop=True)
+
+
+# Check leakage
+overlap = (
+    set(train_df["group_id"])
+    & set(test_df["group_id"])
+)
+
+if overlap:
+    raise ValueError(
+        f"Group leakage detected: {len(overlap)}"
+    )
+
+
+# Save
+train_df.to_csv(
+    TRAIN_FILE,
+    index=False
+)
+
+test_df.to_csv(
+    TEST_FILE,
+    index=False
+)
+
+
+print("Data split completed.")
+
+print("\nTraining columns:")
+print(train_df.columns.tolist())
+
+print("\nTesting columns:")
+print(test_df.columns.tolist())
+
+print("\nTraining rows:", len(train_df))
+print("Testing rows:", len(test_df))
+print("Group overlap:", len(overlap))
+
+print("\nSaved:")
+print(TRAIN_FILE)
+print(TEST_FILE)

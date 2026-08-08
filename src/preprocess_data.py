@@ -48,7 +48,7 @@ def apply_preprocessing():
     # Save the Final Dataset
     # ==========================================
     df_balanced.to_csv(output_path, index=False)
-    print(f"\n✅ Success! Final preprocessed dataset saved to: {output_path}")
+    print(f"\n Success! Final preprocessed dataset saved to: {output_path}")
 
 if __name__ == "__main__":
     apply_preprocessing()
