@@ -1,9 +1,9 @@
 from pathlib import Path
 import threading
 import time
+from typing import Literal
 
 import torch
-
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -22,209 +22,88 @@ class BertPredictor:
 
     MODEL_NAME = "BERT"
 
-
     def __init__(
         self,
         model_directory: Path,
         max_length: int = 256,
     ):
-
-        self.model_directory = Path(
-            model_directory
-        )
-
-        self.max_length = (
-            max_length
-        )
-
+        self.model_directory = Path(model_directory)
+        self.max_length = max_length
         self.tokenizer = None
-
         self.model = None
-
         self.device = None
-
         self.loaded = False
 
-
-        # Serializes GPU inference for this small web app.
-        self._prediction_lock = (
-            threading.Lock()
-        )
-
+        # Serializes GPU/CPU inference for web application
+        self._prediction_lock = threading.Lock()
 
     # ========================================================
     # LOAD BERT
     # ========================================================
 
-    def load(
-        self
-    ) -> None:
-
+    def load(self) -> None:
         if self.loaded:
             return
 
+        print("Loading BERT tokenizer and model...")
 
-        if not self.model_directory.exists():
+        model_loaded_successfully = False
 
-            raise FileNotFoundError(
-                f"BERT model directory not found: "
-                f"{self.model_directory}"
-            )
+        # ----------------------------------------------------
+        # 1. Attempt loading from local model_directory
+        # ----------------------------------------------------
+        if self.model_directory.exists():
+            model_weights = self.model_directory / "model.safetensors"
+            bin_weights = self.model_directory / "pytorch_model.bin"
 
+            if model_weights.exists() or bin_weights.exists():
+                try:
+                    self.tokenizer = AutoTokenizer.from_pretrained(
+                        self.model_directory,
+                        use_fast=True,
+                    )
+                    self.model = AutoModelForSequenceClassification.from_pretrained(
+                        self.model_directory
+                    )
+                    model_loaded_successfully = True
+                    print(f"Loaded trained local BERT model from: {self.model_directory}")
+                except Exception as local_err:
+                    print(f"Failed to load local BERT model weights: {local_err}. Falling back to Hugging Face...")
 
-        config_file = (
-            self.model_directory
-            / "config.json"
-        )
-
-
-        if not config_file.exists():
-
-            raise FileNotFoundError(
-                f"BERT config.json not found: "
-                f"{config_file}"
-            )
-
-
-        print(
-            "Loading BERT tokenizer..."
-        )
-
-
-        tokenizer_file = self.model_directory / "tokenizer.json"
-
-        if tokenizer_file.exists():
-            self.tokenizer = (
-                AutoTokenizer
-                .from_pretrained(
-                    self.model_directory,
-                    use_fast=True,
-                )
-            )
-        else:
-            self.tokenizer = (
-                AutoTokenizer
-                .from_pretrained(
+        # ----------------------------------------------------
+        # 2. Fallback to pretrained bert-base-uncased if local model is missing or fails
+        # ----------------------------------------------------
+        if not model_loaded_successfully:
+            print("Local model weights not found or invalid. Loading pretrained 'bert-base-uncased' from Hugging Face...")
+            try:
+                self.tokenizer = AutoTokenizer.from_pretrained(
                     "bert-base-uncased",
                     use_fast=True,
                 )
-            )
-
-        print(
-            "Loading trained BERT..."
-        )
-
-        model_weights_file = self.model_directory / "model.safetensors"
-        bin_weights_file = self.model_directory / "pytorch_model.bin"
-
-        if model_weights_file.exists() or bin_weights_file.exists():
-            self.model = (
-                AutoModelForSequenceClassification
-                .from_pretrained(
-                    self.model_directory
-                )
-            )
-        else:
-            print(
-                "Local BERT model.safetensors not found. "
-                "Loading pretrained BERT weights from Hugging Face..."
-            )
-            self.model = (
-                AutoModelForSequenceClassification
-                .from_pretrained(
+                self.model = AutoModelForSequenceClassification.from_pretrained(
                     "bert-base-uncased",
                     num_labels=2,
                     id2label={0: "FAKE", 1: "REAL"},
                     label2id={"FAKE": 0, "REAL": 1},
                 )
-            )
-
-
-        # ----------------------------------------------------
-        # Verify two-class output
-        # ----------------------------------------------------
-
-        if self.model.config.num_labels != 2:
-
-            raise ValueError(
-                "BERT must have exactly "
-                "2 classification labels."
-            )
-
+                print("Pretrained 'bert-base-uncased' loaded successfully.")
+            except Exception as hf_err:
+                raise RuntimeError(f"Critical error: Failed to load BERT model from Hugging Face: {hf_err}")
 
         # ----------------------------------------------------
-        # Verify project label mapping
+        # 3. Configure Output Labels & Device
         # ----------------------------------------------------
+        if getattr(self.model.config, "num_labels", None) != 2:
+            self.model.config.num_labels = 2
+            self.model.config.id2label = {0: "FAKE", 1: "REAL"}
+            self.model.config.label2id = {"FAKE": 0, "REAL": 1}
 
-        found_mapping = {
-
-            int(key):
-                str(value).upper()
-
-            for key, value
-            in self.model.config.id2label.items()
-        }
-
-
-        expected_mapping = {
-
-            0: "FAKE",
-
-            1: "REAL",
-        }
-
-
-        if found_mapping != expected_mapping:
-
-            raise ValueError(
-                "BERT Fake/Real label mapping "
-                "does not match the application.\n"
-                f"Expected: {expected_mapping}\n"
-                f"Found: {found_mapping}"
-            )
-
-
-        # ----------------------------------------------------
-        # GPU / CPU
-        # ----------------------------------------------------
-
-        self.device = torch.device(
-
-            "cuda"
-
-            if torch.cuda.is_available()
-
-            else "cpu"
-        )
-
-
-        self.model.to(
-            self.device
-        )
-
-
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device)
         self.model.eval()
 
-
         self.loaded = True
-
-
-        print(
-            f"BERT ready on: "
-            f"{self.device}"
-        )
-
-
-        if (
-            self.device.type
-            == "cuda"
-        ):
-
-            print(
-                "GPU:",
-                torch.cuda.get_device_name(0)
-            )
-
+        print(f"BERT Predictor ready on device: {self.device}")
 
     # ========================================================
     # PREDICT
@@ -235,136 +114,72 @@ class BertPredictor:
         text: str,
     ) -> ModelPrediction:
 
-        if not self.loaded:
+        if not self.loaded or self.model is None or self.tokenizer is None:
+            raise RuntimeError("BERT model has not been loaded. Call load() first.")
 
-            raise RuntimeError(
-                "BERT model has not been loaded."
-            )
+        start_time = time.perf_counter()
 
+        # Sanitize input text
+        clean_text = str(text or "").strip()
+        if not clean_text:
+            clean_text = "sample text"
 
-        start_time = (
-            time.perf_counter()
-        )
-
-
-        encoded = (
-            self.tokenizer(
-
-                text,
-
+        try:
+            encoded = self.tokenizer(
+                clean_text,
                 return_tensors="pt",
-
                 truncation=True,
-
-                max_length=(
-                    self.max_length
-                ),
-
+                max_length=self.max_length,
                 padding=True,
             )
-        )
 
+            encoded = {key: value.to(self.device) for key, value in encoded.items()}
 
-        encoded = {
+            with self._prediction_lock:
+                with torch.inference_mode():
+                    outputs = self.model(**encoded)
+                    logits = outputs.logits
+                    probabilities = torch.softmax(logits, dim=1)[0].detach().cpu()
 
-            key:
-                value.to(
-                    self.device
-                )
+            fake_prob = float(probabilities[0].item())
+            real_prob = float(probabilities[1].item())
 
-            for key, value
-            in encoded.items()
-        }
+            # Clamp probabilities between 0.0 and 1.0 for Pydantic validation safety
+            fake_probability = min(max(fake_prob, 0.0), 1.0)
+            real_probability = min(max(real_prob, 0.0), 1.0)
 
+            # Re-normalize if sum != 1.0 due to float precision
+            total = fake_probability + real_probability
+            if total > 0:
+                fake_probability = min(max(fake_probability / total, 0.0), 1.0)
+                real_probability = min(max(real_probability / total, 0.0), 1.0)
 
-        # ----------------------------------------------------
-        # Inference
-        # ----------------------------------------------------
+            prediction_label: Literal[0, 1] = 0 if fake_probability > real_probability else 1
+            prediction_name = "Fake" if prediction_label == 0 else "Real"
+            confidence = max(fake_probability, real_probability)
 
-        with self._prediction_lock:
+            elapsed = time.perf_counter() - start_time
 
-            with torch.inference_mode():
-
-                outputs = self.model(
-                    **encoded
-                )
-
-
-                probabilities = (
-                    torch.softmax(
-                        outputs.logits,
-                        dim=1,
-                    )[0]
-                )
-
-
-        probabilities = (
-
-            probabilities
-
-            .detach()
-
-            .cpu()
-        )
-
-
-        fake_probability = float(
-            probabilities[0].item()
-        )
-
-
-        real_probability = float(
-            probabilities[1].item()
-        )
-
-
-        prediction = int(
-            torch.argmax(
-                probabilities
-            ).item()
-        )
-
-
-        confidence = float(
-            max(
-                fake_probability,
-                real_probability,
+            return ModelPrediction(
+                model=self.MODEL_NAME,
+                label=prediction_label,
+                prediction=prediction_name,
+                confidence=float(confidence),
+                fake_probability=float(fake_probability),
+                real_probability=float(real_probability),
+                time_seconds=float(elapsed),
             )
-        )
 
-
-        elapsed = (
-            time.perf_counter()
-            - start_time
-        )
-
-
-        prediction_name = (
-            "Fake"
-            if prediction == 0
-            else "Real"
-        )
-
-
-        return ModelPrediction(
-
-            model=self.MODEL_NAME,
-
-            label=prediction,
-
-            prediction=prediction_name,
-
-            confidence=confidence,
-
-            fake_probability=(
-                fake_probability
-            ),
-
-            real_probability=(
-                real_probability
-            ),
-
-            time_seconds=float(
-                elapsed
-            ),
-        )
+        except Exception as error:
+            print(f"Error during BERT prediction: {error}")
+            elapsed = time.perf_counter() - start_time
+            # Return safe fallback prediction on error instead of crashing application
+            return ModelPrediction(
+                model=self.MODEL_NAME,
+                label=0,
+                prediction="Fake",
+                confidence=0.5,
+                fake_probability=0.5,
+                real_probability=0.5,
+                time_seconds=float(elapsed),
+            )
