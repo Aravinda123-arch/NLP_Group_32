@@ -121,9 +121,7 @@ class BertPredictor:
         start_time = time.perf_counter()
 
         # Sanitize input text
-        clean_text = str(text or "").strip()
-        if not clean_text:
-            clean_text = "sample text"
+        clean_text = text.strip() if text else "sample text"
 
         try:
             encoded = self.tokenizer(
