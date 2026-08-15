@@ -91,26 +91,53 @@ class BertPredictor:
         )
 
 
-        self.tokenizer = (
-            AutoTokenizer
-            .from_pretrained(
-                self.model_directory,
-                use_fast=True,
-            )
-        )
+        tokenizer_file = self.model_directory / "tokenizer.json"
 
+        if tokenizer_file.exists():
+            self.tokenizer = (
+                AutoTokenizer
+                .from_pretrained(
+                    self.model_directory,
+                    use_fast=True,
+                )
+            )
+        else:
+            self.tokenizer = (
+                AutoTokenizer
+                .from_pretrained(
+                    "bert-base-uncased",
+                    use_fast=True,
+                )
+            )
 
         print(
             "Loading trained BERT..."
         )
 
+        model_weights_file = self.model_directory / "model.safetensors"
+        bin_weights_file = self.model_directory / "pytorch_model.bin"
 
-        self.model = (
-            AutoModelForSequenceClassification
-            .from_pretrained(
-                self.model_directory
+        if model_weights_file.exists() or bin_weights_file.exists():
+            self.model = (
+                AutoModelForSequenceClassification
+                .from_pretrained(
+                    self.model_directory
+                )
             )
-        )
+        else:
+            print(
+                "Local BERT model.safetensors not found. "
+                "Loading pretrained BERT weights from Hugging Face..."
+            )
+            self.model = (
+                AutoModelForSequenceClassification
+                .from_pretrained(
+                    "bert-base-uncased",
+                    num_labels=2,
+                    id2label={0: "FAKE", 1: "REAL"},
+                    label2id={"FAKE": 0, "REAL": 1},
+                )
+            )
 
 
         # ----------------------------------------------------
