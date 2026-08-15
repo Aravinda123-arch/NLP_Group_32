@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
+
+# Large model files (>100MB blocked by GitHub)
+*.safetensors
+*.bin
+*.dll
+*.so
+*.dylib

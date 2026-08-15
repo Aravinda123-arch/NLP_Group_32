@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Fake News Detection System using machine learning and deep learning models."
+    >
+
+    <title>
+        Fake News Detection
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+</head>
+
+
+<body>
+
+    <!-- Ambient background beam & grid overlays -->
+    <div class="bg-grid-overlay"></div>
+    <div class="bg-spotlight"></div>
+    <div class="bg-emerald-glow"></div>
+    <canvas id="gridCanvas" class="bg-grid-canvas"></canvas>
+
+    <!-- ==================================================
+         FULL-SCREEN APP PRELOADER
+    =================================================== -->
+    <div id="appPreloader" class="app-preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo-container">
+                <div class="radar-ring outer-ring"></div>
+                <div class="radar-ring inner-ring"></div>
+                <img src="assets/logo.png" alt="Loading System" class="preloader-shield-logo">
+            </div>
+
+            <div class="preloader-status">
+                <p id="preloaderStatusText" class="preloader-text">Initializing AI Verification System...</p>
+                <div class="preloader-track">
+                    <div id="preloaderBar" class="preloader-fill"></div>
+                </div>
+                <span id="preloaderPercent" class="preloader-percent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================
+         APPLICATION
+    =================================================== -->
+
+    <main class="app-container">
+
+        <!-- Interactive Theme Pill Toggle Switch -->
+        <button type="button" id="themeToggleBtn" class="theme-toggle-pill" aria-label="Toggle Light/Dark Theme" title="Switch Theme (Dark / Light)">
+            <span class="toggle-icon moon-slot">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </span>
+            <span class="toggle-icon sun-slot">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </span>
+            <span class="toggle-thumb"></span>
+        </button>
+
+        <!-- ==================================================
+             HEADER
+        =================================================== -->
+
+        <header class="app-header">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    <img src="assets/logo.png" alt="Fake News Verification Shield Logo" class="brand-logo-img">
+                </div>
+
+                <div>
+
+                    <h1>
+                        Fake News <span class="gradient-text">Detection System</span>
+                    </h1>
+
+                    <p class="brand-subtitle">
+                        Intelligent real-time news verification powered by ML & BERT Deep Learning.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==================================================
+             INPUT SECTION
+        =================================================== -->
+
+        <section class="input-card">
+
+            <div class="section-heading">
+
+                <h2>
+                    Analyze News
+                </h2>
+
+                <p>
+                    Enter a headline and paste the complete
+                    English news article.
+                </p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 HEADLINE
+            =================================================== -->
+
+            <div class="form-group">
+
+                <label for="headline">
+                    News Headline
+                    <span class="optional">
+                        Optional
+                    </span>
+                </label>
+
+                <input
+                    type="text"
+                    id="headline"
+                    maxlength="1000"
+                    placeholder="Enter the news headline..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- ==================================================
+                 ARTICLE
+            =================================================== -->
+
+            <div class="form-group">
+
+                <div class="article-label-row">
+
+                    <label for="article">
+                        News Article
+                    </label>
+
+                    <span id="wordCount">
+                        0 words
+                    </span>
+
+                </div>
+
+                <textarea
+                    id="article"
+                    maxlength="100000"
+                    placeholder="Paste the full news article here..."
+                    rows="12"
+                ></textarea>
+
+                <p class="helper-text">
+                    Minimum 20 words. A complete article
+                    produces a more meaningful prediction.
+                </p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ACTION
+            =================================================== -->
+
+            <button
+                type="button"
+                id="analyzeButton"
+                class="analyze-button"
+            >
+
+                <span id="buttonText">
+                    Analyze News
+                </span>
+
+                <span
+                    id="buttonSpinner"
+                    class="button-spinner hidden"
+                    aria-hidden="true"
+                ></span>
+
+            </button>
+
+
+            <!-- ==================================================
+                 ERROR MESSAGE
+            =================================================== -->
+
+            <div
+                id="errorMessage"
+                class="error-message hidden"
+                role="alert"
+            ></div>
+
+            <!-- Step / Status indicators -->
+            <div class="card-step-indicators">
+                <span class="step-dot active"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             LOADING SECTION
+        =================================================== -->
+
+        <section
+            id="loadingSection"
+            class="loading-section hidden"
+            aria-live="polite"
+        >
+
+            <div class="loading-spinner"></div>
+
+            <div>
+
+                <h3>
+                    Analyzing news
+                </h3>
+
+                <p>
+                    Running the article through the
+                    prediction models...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             RESULT SECTION
+        =================================================== -->
+
+        <section
+            id="resultSection"
+            class="results-section hidden"
+            aria-live="polite"
+        >
+
+
+            <!-- ==================================================
+                 FINAL RESULT
+            =================================================== -->
+
+            <div
+                id="finalResultCard"
+                class="final-result-card"
+            >
+
+                <div class="final-result-top">
+
+                    <div>
+
+                        <p class="result-eyebrow">
+                            Final Prediction
+                        </p>
+
+                        <h2
+                            id="finalPrediction"
+                            class="final-prediction"
+                        >
+                            -
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        id="finalBadge"
+                        class="final-badge"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="final-details">
+
+                    <div class="detail-item">
+
+                        <span>
+                            Confidence
+                        </span>
+
+                        <strong id="finalConfidence">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Selected Model
+                        </span>
+
+                        <strong id="selectedModel">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Model Agreement
+                        </span>
+
+                        <strong id="modelAgreement">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Processing Time
+                        </span>
+
+                        <strong id="totalTime">
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    id="decisionMethod"
+                    class="decision-method"
+                ></p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 INDIVIDUAL MODEL RESULTS
+            =================================================== -->
+
+            <div class="models-heading">
+
+                <div>
+
+                    <h2>
+                        Model Predictions
+                    </h2>
+
+                    <p>
+                        Individual results from each enabled
+                        model.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!--
+                Model cards are generated dynamically
+                from backend response.models.
+            -->
+
+            <div
+                id="modelResults"
+                class="model-results-grid"
+            ></div>
+
+
+            <!-- ==================================================
+                 INPUT INFORMATION
+            =================================================== -->
+
+            <div class="analysis-meta">
+
+                <span>
+                    Input:
+                    <strong id="inputWordCount">
+                        0
+                    </strong>
+                    words
+                </span>
+
+            </div>
+
+
+            <!-- ==================================================
+                 DISCLAIMER
+            =================================================== -->
+
+            <div class="disclaimer">
+
+                <strong>
+                    Important
+                </strong>
+
+                <p>
+                    This system provides predictions from
+                    trained machine-learning models. A
+                    prediction does not independently verify
+                    whether every statement in an article is
+                    factually true or false.
+                </p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ANALYZE ANOTHER
+            =================================================== -->
+
+            <button
+                type="button"
+                id="analyzeAnotherButton"
+                class="secondary-button"
+            >
+                Analyze Another Article
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================
+         JAVASCRIPT
+    =================================================== -->
+
+    <script
+        src="js/app.js"
+        defer
+    ></script>
+
+</body>
+
+</html>

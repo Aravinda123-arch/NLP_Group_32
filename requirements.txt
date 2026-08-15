@@ -1,0 +1,50 @@
+# ==================================================
+# Fake News Detection System - Python Requirements
+# ==================================================
+
+# ---------------------------
+# Backend API
+# ---------------------------
+fastapi
+uvicorn[standard]
+
+# ---------------------------
+# Data Validation
+# ---------------------------
+pydantic
+
+# ---------------------------
+# Machine Learning
+# ---------------------------
+scikit-learn
+joblib
+numpy
+scipy
+
+# ---------------------------
+# BERT / Deep Learning
+# ---------------------------
+torch
+transformers
+tokenizers
+safetensors
+
+# ---------------------------
+# NLP / Text Preprocessing
+# ---------------------------
+nltk
+
+# ---------------------------
+# Data Handling
+# ---------------------------
+pandas
+
+# ---------------------------
+# Environment Configuration
+# ---------------------------
+python-dotenv
+
+# ---------------------------
+# Form / File Request Support
+# ---------------------------
+python-multipart

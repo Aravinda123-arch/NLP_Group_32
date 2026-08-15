@@ -1,0 +1,3 @@
+@echo off
+echo Starting Fake News Detection Server (Backend + Frontend)...
+.\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload
