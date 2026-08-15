@@ -93,14 +93,15 @@ class BertPredictor:
         # ----------------------------------------------------
         # 3. Configure Output Labels & Device
         # ----------------------------------------------------
-        if getattr(self.model.config, "num_labels", None) != 2:
-            self.model.config.num_labels = 2
-            self.model.config.id2label = {0: "FAKE", 1: "REAL"}
-            self.model.config.label2id = {"FAKE": 0, "REAL": 1}
+        if self.model is not None:
+            if getattr(self.model.config, "num_labels", None) != 2:
+                self.model.config.num_labels = 2
+                self.model.config.id2label = {0: "FAKE", 1: "REAL"}
+                self.model.config.label2id = {"FAKE": 0, "REAL": 1}
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model.to(self.device)
-        self.model.eval()
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            self.model.to(self.device)
+            self.model.eval()
 
         self.loaded = True
         print(f"BERT Predictor ready on device: {self.device}")
