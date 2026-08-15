@@ -163,10 +163,10 @@ class BertPredictor:
                 model=self.MODEL_NAME,
                 label=prediction_label,
                 prediction=prediction_name,
-                confidence=float(confidence),
-                fake_probability=float(fake_probability),
-                real_probability=float(real_probability),
-                time_seconds=float(elapsed),
+                confidence=confidence,
+                fake_probability=fake_probability,
+                real_probability=real_probability,
+                time_seconds=elapsed,
             )
 
         except Exception as error:
@@ -180,5 +180,5 @@ class BertPredictor:
                 confidence=0.5,
                 fake_probability=0.5,
                 real_probability=0.5,
-                time_seconds=float(elapsed),
+                time_seconds=elapsed,
             )
