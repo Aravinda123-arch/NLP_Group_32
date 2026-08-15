@@ -1310,12 +1310,21 @@ function initThemeToggle() {
 
     if (!toggleBtn) return;
 
+    toggleBtn.setAttribute("aria-label", savedTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode");
+
     toggleBtn.addEventListener("click", () => {
         const currentTheme = document.documentElement.getAttribute("data-theme");
         const newTheme = currentTheme === "light" ? "dark" : "light";
 
+        document.body.classList.add("theme-transitioning");
+
         document.documentElement.setAttribute("data-theme", newTheme);
         localStorage.setItem("theme", newTheme);
+        toggleBtn.setAttribute("aria-label", newTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode");
+
+        setTimeout(() => {
+            document.body.classList.remove("theme-transitioning");
+        }, 400);
     });
 }
 

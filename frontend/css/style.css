@@ -99,9 +99,9 @@ body {
 /* Interactive Theme Sliding Glass Pill Switch */
 .theme-toggle-pill {
     position: fixed;
-    top: 40px;
-    right: -300px;
-    z-index: 999;
+    top: 24px;
+    right: 28px;
+    z-index: 9999;
     width: 76px;
     height: 38px;
     border-radius: 99px;
@@ -114,8 +114,8 @@ body {
     cursor: pointer;
     backdrop-filter: blur(18px) saturate(180%);
     -webkit-backdrop-filter: blur(18px) saturate(180%);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), 0 0 15px var(--emerald-subtle);
+    transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.25s ease;
     user-select: none;
 }
 
@@ -1095,24 +1095,85 @@ textarea:focus {
 }
 
 /* ==========================================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN (MOBILE & TABLET ENHANCEMENTS)
 ========================================================== */
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+    .theme-toggle-pill {
+        top: 16px;
+        right: 16px;
+        width: 68px;
+        height: 34px;
+    }
+
+    .toggle-icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .toggle-thumb {
+        width: 26px;
+        height: 26px;
+        top: 3px;
+        left: 3px;
+    }
+
+    [data-theme="light"] .toggle-thumb {
+        transform: translateX(33px);
+    }
+
     .app-container {
-        padding: 30px 0 60px;
+        padding: 60px 16px 40px;
+    }
+
+    .app-header {
+        margin-bottom: 28px;
+    }
+
+    .app-title {
+        font-size: 2.2rem;
     }
 
     .input-card,
     .final-result-card {
-        padding: 24px 20px;
-    }
-
-    .final-prediction {
-        font-size: 1.8rem;
+        padding: 22px 18px;
     }
 
     .final-details {
         grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .theme-toggle-pill {
+        top: 14px;
+        right: 14px;
+    }
+
+    .app-title {
+        font-size: 1.8rem;
+    }
+
+    .app-subtitle {
+        font-size: 0.92rem;
+    }
+
+    .final-prediction {
+        font-size: 1.6rem;
+    }
+
+    .final-details {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .model-results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-primary {
+        padding: 14px 20px;
+        font-size: 0.95rem;
     }
 }
