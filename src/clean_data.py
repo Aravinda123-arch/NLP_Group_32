@@ -24,3 +24,4 @@ df.to_csv(r"C:\Users\User\OneDrive\Desktop\Fake News Detection\data\cleaned_news
 print("Part 2 Success: Data Cleaned.")
 print("\n--- Top 5 Cleaned Dataset Preview ---")
 print(df[["clean_text", "label"]].head())
+

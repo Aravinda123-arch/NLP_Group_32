@@ -29,9 +29,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding, SpatialDropout1D, LSTM, Dense, Dropout
-from tensorflow.keras.callbacks import EarlyStopping
+# Use Keras via the already-imported TensorFlow object for compatibility
+Sequential = tf.keras.models.Sequential
+Embedding = tf.keras.layers.Embedding
+SpatialDropout1D = tf.keras.layers.SpatialDropout1D
+LSTM = tf.keras.layers.LSTM
+Dense = tf.keras.layers.Dense
+Dropout = tf.keras.layers.Dropout
+EarlyStopping = tf.keras.callbacks.EarlyStopping
 
 # Keras / TensorFlow compatible preprocessing imports
 Tokenizer = tf.keras.preprocessing.text.Tokenizer
@@ -108,8 +113,8 @@ def main():
 
     # 6. Early Stopping Callback
     early_stop = EarlyStopping(
-        monitor='val_loss', 
-        patience=2, 
+        monitor='val_loss',
+        patience=2,
         restore_best_weights=True
     )
 
@@ -151,7 +156,7 @@ def main():
     # 9. Confusion Matrix
     cm = confusion_matrix(y_test, y_pred)
     plt.figure(figsize=(6, 5))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
                 xticklabels=['Predicted Fake', 'Predicted Real'],
                 yticklabels=['Actual Fake', 'Actual Real'])
     plt.title('LSTM - Confusion Matrix')
@@ -172,3 +177,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    

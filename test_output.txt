@@ -1,0 +1,87 @@
+﻿
+==========================================
+ LOGISTIC REGRESSION EXTERNAL VALIDATION
+==========================================
+Fake dataset: C:\Users\User\OneDrive\Desktop\Fake News Detection\data\external_validation\Fake.xlsx
+Real dataset: C:\Users\User\OneDrive\Desktop\Fake News Detection\data\external_validation\Real.xlsx
+Logistic Regression model: C:\Users\User\OneDrive\Desktop\Fake News Detection\models\logistic_regression.pkl
+TF-IDF vectorizer: C:\Users\User\OneDrive\Desktop\Fake News Detection\models\tfidf_vectorizer.pkl
+
+Loading PolyglotFakeFacts...
+Raw Fake records: 4912
+Raw Real records: 5294
+
+Original external records:
+Fake: 4912
+Real: 5294
+Total: 10206
+
+Post-2020 external records: 7924
+Date range: 2020-01-01 00:00:00 to 2026-10-11 00:00:00
+
+Final external records: 6762
+
+External class distribution:
+label
+Fake    2696
+Real    4066
+Name: count, dtype: int64
+
+Loading Logistic Regression...
+Loaded model type: LogisticRegression
+
+Loading Logistic Regression TF-IDF vectorizer...
+TF-IDF features: 1500
+Model / TF-IDF compatibility: OK
+
+External TF-IDF shape: (6762, 1500)
+Empty external TF-IDF vectors: 0
+
+Running Logistic Regression predictions...
+
+==========================================
+ LOGISTIC REGRESSION POLYGLOT EXTERNAL TEST
+==========================================
+External records:          6762
+External Accuracy:         0.4936 (49.36%)
+Balanced Accuracy:         0.5013
+Macro Precision:           0.5013
+Macro Recall:              0.5013
+Macro F1-score:            0.4916
+Weighted F1-score:         0.4981
+ROC-AUC:                   0.4990
+MCC:                       0.0026
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        Fake     0.3999    0.5393    0.4593      2696
+        Real     0.6027    0.4634    0.5239      4066
+
+    accuracy                         0.4936      6762
+   macro avg     0.5013    0.5013    0.4916      6762
+weighted avg     0.5218    0.4936    0.4981      6762
+
+Confusion Matrix:
+[[1454 1242]
+ [2182 1884]]
+
+Rows    = Actual [Fake, Real]
+Columns = Predicted [Fake, Real]
+
+==========================================
+ EXTERNAL VALIDATION COMPLETE
+==========================================
+
+Logistic Regression external accuracy:
+49.36%
+
+Reports saved:
+C:\Users\User\OneDrive\Desktop\Fake News Detection\reports\logistic_regression_polyglot_external_metrics.csv
+C:\Users\User\OneDrive\Desktop\Fake News Detection\reports\logistic_regression_polyglot_external_predictions.csv
+C:\Users\User\OneDrive\Desktop\Fake News Detection\reports\logistic_regression_polyglot_confusion_matrix.csv
+
+IMPORTANT:
+PolyglotFakeFacts was used for evaluation only.
+Do not fit the TF-IDF vectorizer or retrain Logistic Regression using this external dataset.
+==========================================

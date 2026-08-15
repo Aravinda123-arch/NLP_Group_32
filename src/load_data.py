@@ -25,3 +25,4 @@ df.to_csv(r"C:\Users\User\OneDrive\Desktop\Fake News Detection\data\combined_new
 
 print("Part 1 Success: Data Loaded and Combined.")
 print(f"Total Original Rows Retained: {len(df)}")
+

@@ -21,7 +21,7 @@ from sklearn.metrics import (
 def remove_publisher_bias(text):
     """
     MODIFICATION 1: Strips publisher attributions (e.g., 'WASHINGTON (Reuters) -')
-    This prevents the model from cheating on high-frequency source tokens and 
+    This prevents the model from cheating on high-frequency source tokens and
     forces it to learn generalizable linguistic writing styles.
     """
     if not isinstance(text, str):
@@ -108,7 +108,7 @@ def main():
     # 7. Confusion Matrix Visualization
     cm = confusion_matrix(y_test, y_pred)
     plt.figure(figsize=(6, 5))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
                 xticklabels=['Predicted Fake', 'Predicted Real'],
                 yticklabels=['Actual Fake', 'Actual Real'])
     plt.title('Logistic Regression - Confusion Matrix')
@@ -127,3 +127,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    
