@@ -124,8 +124,10 @@ class ModelManager:
         )
 
 
-        self.bert.load()
-
+        try:
+            self.bert.load()
+        except Exception as error:
+            print(f"Warning: BERT failed to load: {error}. Application will operate with Random Forest.")
 
         self.loaded = True
 

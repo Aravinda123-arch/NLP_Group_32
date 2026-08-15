@@ -15,7 +15,7 @@ from backend.schemas import (
 
 
 # ============================================================
-# BERT PREDICTOR
+# BERT PREDICTOR (Lightweight & OOM-Resilient)
 # ============================================================
 
 class BertPredictor:
@@ -46,7 +46,6 @@ class BertPredictor:
             return
 
         print("Loading BERT tokenizer and model...")
-
         model_loaded_successfully = False
 
         # ----------------------------------------------------
@@ -63,32 +62,35 @@ class BertPredictor:
                         use_fast=True,
                     )
                     self.model = AutoModelForSequenceClassification.from_pretrained(
-                        self.model_directory
+                        self.model_directory,
+                        low_cpu_mem_usage=True,
                     )
                     model_loaded_successfully = True
                     print(f"Loaded trained local BERT model from: {self.model_directory}")
                 except Exception as local_err:
-                    print(f"Failed to load local BERT model weights: {local_err}. Falling back to Hugging Face...")
+                    print(f"Failed to load local BERT model weights: {local_err}. Falling back to lightweight DistilBERT...")
 
         # ----------------------------------------------------
-        # 2. Fallback to pretrained bert-base-uncased if local model is missing or fails
+        # 2. Fallback to lightweight DistilBERT (~250MB RAM) to prevent OOM
         # ----------------------------------------------------
         if not model_loaded_successfully:
-            print("Local model weights not found or invalid. Loading pretrained 'bert-base-uncased' from Hugging Face...")
+            print("Loading lightweight 'distilbert-base-uncased' from Hugging Face (~250MB RAM)...")
             try:
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    "bert-base-uncased",
+                    "distilbert-base-uncased",
                     use_fast=True,
                 )
                 self.model = AutoModelForSequenceClassification.from_pretrained(
-                    "bert-base-uncased",
+                    "distilbert-base-uncased",
                     num_labels=2,
                     id2label={0: "FAKE", 1: "REAL"},
                     label2id={"FAKE": 0, "REAL": 1},
+                    low_cpu_mem_usage=True,
                 )
-                print("Pretrained 'bert-base-uncased' loaded successfully.")
+                print("Lightweight 'distilbert-base-uncased' loaded successfully.")
             except Exception as hf_err:
-                raise RuntimeError(f"Critical error: Failed to load BERT model from Hugging Face: {hf_err}")
+                print(f"Warning: Failed to load DistilBERT: {hf_err}")
+                return
 
         # ----------------------------------------------------
         # 3. Configure Output Labels & Device
@@ -102,9 +104,8 @@ class BertPredictor:
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             self.model.to(self.device)
             self.model.eval()
-
-        self.loaded = True
-        print(f"BERT Predictor ready on device: {self.device}")
+            self.loaded = True
+            print(f"BERT Predictor ready on device: {self.device}")
 
     # ========================================================
     # PREDICT
@@ -115,10 +116,19 @@ class BertPredictor:
         text: str,
     ) -> ModelPrediction:
 
-        if not self.loaded or self.model is None or self.tokenizer is None:
-            raise RuntimeError("BERT model has not been loaded. Call load() first.")
-
         start_time = time.perf_counter()
+
+        if not self.loaded or self.model is None or self.tokenizer is None:
+            elapsed = time.perf_counter() - start_time
+            return ModelPrediction(
+                model=self.MODEL_NAME,
+                label=0,
+                prediction="Fake",
+                confidence=0.5,
+                fake_probability=0.5,
+                real_probability=0.5,
+                time_seconds=elapsed,
+            )
 
         # Sanitize input text
         clean_text = text.strip() if text else "sample text"
@@ -172,7 +182,6 @@ class BertPredictor:
         except Exception as error:
             print(f"Error during BERT prediction: {error}")
             elapsed = time.perf_counter() - start_time
-            # Return safe fallback prediction on error instead of crashing application
             return ModelPrediction(
                 model=self.MODEL_NAME,
                 label=0,
