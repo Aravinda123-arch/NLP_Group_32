@@ -1,0 +1,23 @@
+2026-07-28 23:10:52,499 | INFO | GRU training started
+2026-07-28 23:10:52,613 | INFO | GRU data loaded successfully
+2026-07-28 23:10:52,771 | WARNING | TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+2026-07-28 23:10:52,779 | INFO | GRU model created
+2026-07-28 23:12:33,420 | WARNING | You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-07-28 23:15:17,550 | WARNING | You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-07-28 23:21:05,450 | INFO | GRU training completed
+2026-07-28 23:21:05,453 | WARNING | You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-07-28 23:21:05,572 | INFO | GRU model saved
+2026-07-29 00:10:17,926 | INFO | GRU training started
+2026-07-29 00:10:17,993 | INFO | GRU data loaded successfully
+2026-07-29 00:10:18,159 | WARNING | TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+2026-07-29 00:10:18,169 | INFO | GRU model created
+2026-07-29 01:53:30,422 | INFO | GRU training started
+2026-07-29 01:53:30,494 | INFO | GRU data loaded successfully
+2026-07-29 01:53:30,585 | WARNING | TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+2026-07-29 01:53:30,592 | INFO | GRU model created
+2026-07-29 01:54:54,944 | WARNING | You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-07-29 01:57:43,860 | WARNING | You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-07-29 01:59:25,033 | WARNING | You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-07-29 01:59:25,141 | INFO | GRU training completed
+2026-07-29 01:59:25,142 | WARNING | You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-07-29 01:59:25,195 | INFO | GRU model saved
