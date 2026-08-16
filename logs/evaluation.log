@@ -1,0 +1,10 @@
+2026-07-28 23:23:15,469 | INFO | Evaluation started
+2026-07-28 23:23:17,418 | WARNING | TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+2026-07-28 23:23:17,421 | WARNING | Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2026-07-28 23:23:28,506 | WARNING | Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2026-07-28 23:23:28,777 | INFO | Evaluation completed successfully
+2026-07-29 01:59:40,698 | INFO | Evaluation started
+2026-07-29 01:59:41,430 | WARNING | TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+2026-07-29 01:59:41,433 | WARNING | Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2026-07-29 01:59:50,427 | WARNING | Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2026-07-29 01:59:50,622 | INFO | Evaluation completed successfully
