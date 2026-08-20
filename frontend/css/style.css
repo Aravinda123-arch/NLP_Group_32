@@ -100,7 +100,7 @@ body {
 .theme-toggle-pill {
     position: fixed;
     top: 24px;
-    right: 28px;
+    right: 40px;
     z-index: 9999;
     width: 76px;
     height: 38px;
