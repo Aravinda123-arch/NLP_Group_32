@@ -99,8 +99,8 @@ body {
 /* Interactive Theme Sliding Glass Pill Switch */
 .theme-toggle-pill {
     position: fixed;
-    top: 24px;
-    right: 28px;
+    top: 40px;
+    right: -300px;
     z-index: 9999;
     width: 76px;
     height: 38px;
